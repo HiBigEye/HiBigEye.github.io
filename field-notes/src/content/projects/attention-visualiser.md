@@ -3,7 +3,7 @@ title: Attention visualiser
 description: A small tool that shows which words a model attends to.
 date: 2026-10-19
 tags: [attention, neural networks]
-related: [notes/transformer-attention]
+related: [notes/numpy-and-pandas]
 repo: https://github.com/your-username/attention-visualiser
 ---
 
