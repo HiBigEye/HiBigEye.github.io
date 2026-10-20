@@ -1,3 +1,10 @@
+---
+title: Storia e concetti dell'Intelligenza Artificiale
+description: Breve excursus storico e spiegazioni accessibili riguardo i principali concetti riguardo l'AI.
+date: 2026-10-18
+tags: [History of Artificial Intelligence]
+related: [notes/what-is-cognitive-science, notes/behavioural-data-basics]
+---
 # Storia e concetti dell'Intelligenza Artificiale
 
 Oct 18, 2026 · @Yuri
