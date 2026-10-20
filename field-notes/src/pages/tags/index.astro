@@ -1,0 +1,15 @@
+---
+import Base from '../../layouts/Base.astro';
+import { allTags, slugTag } from '../../lib/content';
+const tags = await allTags();
+---
+<Base title="Topics" description="Themes that cut across both degrees.">
+  <div class="kicker">Across both degrees</div>
+  <h1>Topics</h1>
+  <p class="lede">The same ideas keep showing up in psychology lectures and machine-learning labs. Each topic gathers notes, essays and projects together.</p>
+  <ul class="list">
+    {tags.map(([t, n]) => (
+      <li><a class="t" href={`/tags/${slugTag(t)}/`}>{t}</a> <span class="meta">· {n} {n === 1 ? 'entry' : 'entries'}</span></li>
+    ))}
+  </ul>
+</Base>

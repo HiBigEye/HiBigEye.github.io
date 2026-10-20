@@ -1,0 +1,18 @@
+---
+import { DEGREES, KIND_LABEL, fmtDate, slugTag, urlOf, type Entry } from '../lib/content';
+interface Props { entry: Entry; showKind?: boolean }
+const { entry, showKind = false } = Astro.props;
+const d = entry.data as any;
+const degree = entry.collection === 'notes' ? d.degree : null;
+---
+<li>
+  <div class={`kicker ${degree ?? ''}`}>
+    {showKind && <>{KIND_LABEL[entry.collection]} · </>}
+    {degree ? <>{DEGREES[degree as 'cogsci' | 'ai']} · {d.course}</> : fmtDate(d.date)}
+  </div>
+  <a class="t" href={urlOf(entry)}>{d.title}</a>
+  {d.description && <p>{d.description}</p>}
+  {d.tags.length > 0 && (
+    <div class="tags">{d.tags.map((t: string) => <a class="tag" href={`/tags/${slugTag(t)}/`}>{t}</a>)}</div>
+  )}
+</li>

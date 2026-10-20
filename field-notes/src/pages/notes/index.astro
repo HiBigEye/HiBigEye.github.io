@@ -1,0 +1,45 @@
+---
+import Base from '../../layouts/Base.astro';
+import EntryItem from '../../components/EntryItem.astro';
+import { DEGREES, getKind } from '../../lib/content';
+
+const notes = await getKind('notes');
+const groups = (['cogsci', 'ai'] as const).map((deg) => {
+  const mine = notes.filter((n) => n.data.degree === deg);
+  const courses = [...new Set(mine.map((n) => n.data.course))].sort();
+  return { deg, courses: courses.map((c) => ({ c, items: mine.filter((n) => n.data.course === c) })) };
+});
+---
+<Base title="Notes" description="Lecture notes from both degrees.">
+  <div class="kicker">Lecture notes</div>
+  <h1>Notes</h1>
+  <p class="lede">What I learn in class, written up so it sticks — organised by degree and course.</p>
+
+  <nav class="filters" id="filters">
+    <a href="/notes/" data-f="all" aria-current="page">Both degrees</a>
+    <a href="/notes/?degree=cogsci" data-f="cogsci">{DEGREES.cogsci}</a>
+    <a href="/notes/?degree=ai" data-f="ai">{DEGREES.ai}</a>
+  </nav>
+
+  {groups.map(({ deg, courses }) => (
+    <section data-degree={deg}>
+      <div class="section-head"><h2 class={`kicker ${deg}`}>{DEGREES[deg]}</h2></div>
+      {courses.length === 0 && <p class="meta">No notes yet.</p>}
+      {courses.map(({ c, items }) => (
+        <>
+          <h3>{c}</h3>
+          <ul class="list">{items.map((n) => <EntryItem entry={n} />)}</ul>
+        </>
+      ))}
+    </section>
+  ))}
+
+  <script>
+    const f = new URLSearchParams(location.search).get('degree');
+    if (f === 'cogsci' || f === 'ai') {
+      document.querySelectorAll<HTMLElement>('[data-degree]').forEach((s) => (s.hidden = s.dataset.degree !== f));
+      document.querySelectorAll('#filters a').forEach((a) =>
+        (a as HTMLElement).dataset.f === f ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current'));
+    }
+  </script>
+</Base>

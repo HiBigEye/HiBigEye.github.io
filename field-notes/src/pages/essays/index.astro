@@ -1,0 +1,12 @@
+---
+import Base from '../../layouts/Base.astro';
+import EntryItem from '../../components/EntryItem.astro';
+import { getKind } from '../../lib/content';
+const essays = await getKind('essays');
+---
+<Base title="Essays" description="Science writing for curious readers.">
+  <div class="kicker">Science writing</div>
+  <h1>Essays</h1>
+  <p class="lede">Longer pieces that explain ideas from cognitive science and AI to anyone curious — each one links back to the notes behind it.</p>
+  <ul class="list">{essays.map((e) => <EntryItem entry={e} />)}</ul>
+</Base>

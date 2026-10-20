@@ -1,0 +1,20 @@
+---
+import Base from '../../layouts/Base.astro';
+import EntryItem from '../../components/EntryItem.astro';
+import { allTags, getAll, slugTag } from '../../lib/content';
+
+export async function getStaticPaths() {
+  const tags = await allTags();
+  const all = await getAll();
+  return tags.map(([t]) => ({
+    params: { tag: slugTag(t) },
+    props: { name: t, entries: all.filter((e) => e.data.tags.includes(t)) },
+  }));
+}
+const { name, entries } = Astro.props;
+---
+<Base title={name} description={`Everything about ${name}.`}>
+  <div class="kicker"><a href="/tags/">Topics</a></div>
+  <h1>{name}</h1>
+  <ul class="list">{entries.map((e) => <EntryItem entry={e} showKind />)}</ul>
+</Base>

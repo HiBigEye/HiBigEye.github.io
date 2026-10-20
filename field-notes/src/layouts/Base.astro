@@ -1,0 +1,57 @@
+---
+import '../styles/global.css';
+import 'katex/dist/katex.min.css';
+import { SITE } from '../site.config';
+
+interface Props { title?: string; description?: string }
+const { title, description = SITE.tagline } = Astro.props;
+const fullTitle = title ? `${title} · ${SITE.author}` : SITE.title;
+const path = Astro.url.pathname;
+const nav = [
+  ['/notes/', 'Notes'],
+  ['/essays/', 'Essays'],
+  ['/projects/', 'Projects'],
+  ['/tags/', 'Topics'],
+  ['/about/', 'About'],
+];
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="alternate" type="application/rss+xml" title={SITE.title} href="/rss.xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;600&family=JetBrains+Mono&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <header class="masthead">
+      <div class="wrap">
+        <a class="brand" href="/">{SITE.author} <em>— field notes</em></a>
+        <nav class="nav">
+          {nav.map(([href, label]) => (
+            <a href={href} aria-current={path.startsWith(href) ? 'page' : undefined}>{label}</a>
+          ))}
+        </nav>
+      </div>
+    </header>
+    <main class="wrap"><slot /></main>
+    <footer class="footer">
+      <div class="wrap">
+        <span>© {new Date().getFullYear()} {SITE.author}</span>
+        <span>
+          <a href={`mailto:${SITE.email}`}>Email</a>
+          <a href={SITE.github}>GitHub</a>
+          <a href={SITE.linkedin}>LinkedIn</a>
+          <a href="/rss.xml">RSS</a>
+        </span>
+      </div>
+    </footer>
+  </body>
+</html>

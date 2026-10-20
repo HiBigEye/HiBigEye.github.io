@@ -1,0 +1,49 @@
+---
+import Base from './Base.astro';
+import { DEGREES, KIND_LABEL, connectionsOf, fmtDate, slugTag, urlOf, type Entry } from '../lib/content';
+interface Props { entry: Entry }
+const { entry } = Astro.props;
+const d = entry.data as any;
+const degree = entry.collection === 'notes' ? d.degree : null;
+const { outgoing, incoming, shared } = await connectionsOf(entry);
+const groups = [
+  ['Builds on', outgoing],
+  ['Referenced by', incoming],
+  ['Related by topic', shared],
+] as const;
+---
+<Base title={d.title} description={d.description}>
+  <article>
+    <header class="article-head">
+      <div class={`kicker ${degree ?? ''}`}>
+        {degree ? <>{DEGREES[degree as 'cogsci' | 'ai']} · {d.course}</> : KIND_LABEL[entry.collection]}
+      </div>
+      <h1>{d.title}</h1>
+      {d.description && <p class="lede">{d.description}</p>}
+      <div class="meta">
+        {fmtDate(d.date)}
+        {d.link && <> · <a href={d.link}>Live</a></>}
+        {d.repo && <> · <a href={d.repo}>Code</a></>}
+      </div>
+      {d.tags.length > 0 && (
+        <div class="tags">{d.tags.map((t: string) => <a class="tag" href={`/tags/${slugTag(t)}/`}>{t}</a>)}</div>
+      )}
+    </header>
+    <div class="prose"><slot /></div>
+    {(outgoing.length + incoming.length + shared.length) > 0 && (
+      <aside class="connections">
+        <div class="kicker">Connections</div>
+        {groups.map(([label, list]) => list.length > 0 && (
+          <>
+            <h3>{label}</h3>
+            <ul>
+              {list.map((e) => (
+                <li><span class="kind">{KIND_LABEL[e.collection]}</span><a href={urlOf(e)}>{e.data.title}</a></li>
+              ))}
+            </ul>
+          </>
+        ))}
+      </aside>
+    )}
+  </article>
+</Base>

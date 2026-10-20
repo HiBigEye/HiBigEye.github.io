@@ -1,0 +1,22 @@
+---
+import Base from '../layouts/Base.astro';
+import { SITE } from '../site.config';
+---
+<Base title="About" description={`About ${SITE.author}`}>
+  <div class="kicker">About</div>
+  <h1>Hi, I'm {SITE.author}.</h1>
+  <div class="prose">
+    <p class="lede">{SITE.intro}</p>
+    <h2>Why two degrees</h2>
+    <p>✏️ Write here why you chose to study both cognitive science and AI, and what you hope to do with them.</p>
+    <h2>What you'll find here</h2>
+    <ul>
+      <li><a href="/notes/">Notes</a> — lecture notes, organised by course.</li>
+      <li><a href="/essays/">Essays</a> — science writing for curious readers.</li>
+      <li><a href="/projects/">Projects</a> — what I build along the way.</li>
+      <li><a href="/tags/">Topics</a> — the ideas that connect everything.</li>
+    </ul>
+    <h2>Get in touch</h2>
+    <p><a href={`mailto:${SITE.email}`}>{SITE.email}</a> · <a href={SITE.github}>GitHub</a> · <a href={SITE.linkedin}>LinkedIn</a></p>
+  </div>
+</Base>

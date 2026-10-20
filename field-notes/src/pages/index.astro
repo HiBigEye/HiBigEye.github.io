@@ -1,0 +1,51 @@
+---
+import Base from '../layouts/Base.astro';
+import EntryItem from '../components/EntryItem.astro';
+import { DEGREES, getKind, urlOf, fmtDate } from '../lib/content';
+import { SITE } from '../site.config';
+
+const essays = (await getKind('essays')).slice(0, 3);
+const notes = (await getKind('notes')).slice(0, 5);
+const projects = (await getKind('projects')).slice(0, 3);
+const count = async (deg: 'cogsci' | 'ai') => (await getKind('notes')).filter((n) => n.data.degree === deg).length;
+const nCog = await count('cogsci');
+const nAi = await count('ai');
+---
+<Base>
+  <section class="hero">
+    <div>
+      <div class="kicker">{SITE.tagline}</div>
+      <h1>Notes from between minds and machines.</h1>
+      <p class="lede">{SITE.intro}</p>
+    </div>
+    <div class="duo">
+      <a class="cogsci" href="/notes/?degree=cogsci">
+        <div class="kicker cogsci">Master's degree</div>
+        <strong>{DEGREES.cogsci}</strong>
+        <span>{nCog} notes · how people think, perceive and decide</span>
+      </a>
+      <a class="ai" href="/notes/?degree=ai">
+        <div class="kicker ai">Bachelor's degree</div>
+        <strong>{DEGREES.ai}</strong>
+        <span>{nAi} notes · how machines learn from data</span>
+      </a>
+    </div>
+  </section>
+
+  <div class="section-head"><h2>Essays</h2><a href="/essays/">All essays →</a></div>
+  <div class="grid">
+    {essays.map((e) => (
+      <div class="card">
+        <div class="kicker">{fmtDate(e.data.date)}</div>
+        <a class="t" href={urlOf(e)}>{e.data.title}</a>
+        {e.data.description && <p>{e.data.description}</p>}
+      </div>
+    ))}
+  </div>
+
+  <div class="section-head"><h2>Latest notes</h2><a href="/notes/">All notes →</a></div>
+  <ul class="list">{notes.map((n) => <EntryItem entry={n} />)}</ul>
+
+  <div class="section-head"><h2>Projects</h2><a href="/projects/">All projects →</a></div>
+  <ul class="list">{projects.map((p) => <EntryItem entry={p} />)}</ul>
+</Base>
