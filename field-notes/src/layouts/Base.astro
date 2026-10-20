@@ -2,13 +2,14 @@
 import '../styles/global.css';
 import 'katex/dist/katex.min.css';
 import { SITE } from '../site.config';
+import { DEGREES, courseUrl, coursesByDegree } from '../lib/content';
 
 interface Props { title?: string; description?: string }
 const { title, description = SITE.tagline } = Astro.props;
 const fullTitle = title ? `${title} · ${SITE.author}` : SITE.title;
 const path = Astro.url.pathname;
+const noteMenu = await coursesByDegree();
 const nav = [
-  ['/notes/', 'Notes'],
   ['/essays/', 'Essays'],
   ['/projects/', 'Projects'],
   ['/tags/', 'Topics'],
@@ -35,6 +36,24 @@ const nav = [
       <div class="wrap">
         <a class="brand" href="/">{SITE.author} <em>— field notes</em></a>
         <nav class="nav">
+          <details class="menu" id="notes-menu">
+            <summary aria-current={path.startsWith('/notes/') ? 'page' : undefined}>Notes</summary>
+            <div class="menu-panel">
+              <a class="menu-all" href="/notes/">All notes</a>
+              {noteMenu.map(({ deg, courses }) => (
+                <details class={`menu-degree ${deg}`} open={path.startsWith(`/notes/${deg}/`)}>
+                  <summary>{DEGREES[deg]}</summary>
+                  <ul>
+                    <li><a href={`/notes/?degree=${deg}`}>All {DEGREES[deg]} notes</a></li>
+                    {courses.map(({ c }) => (
+                      <li><a href={courseUrl(deg, c)} aria-current={path === courseUrl(deg, c) ? 'page' : undefined}>{c}</a></li>
+                    ))}
+                    {courses.length === 0 && <li class="menu-empty">No courses yet</li>}
+                  </ul>
+                </details>
+              ))}
+            </div>
+          </details>
           {nav.map(([href, label]) => (
             <a href={href} aria-current={path.startsWith(href) ? 'page' : undefined}>{label}</a>
           ))}
@@ -42,6 +61,15 @@ const nav = [
       </div>
     </header>
     <main class="wrap"><slot /></main>
+    <script>
+      const menu = document.getElementById('notes-menu') as HTMLDetailsElement | null;
+      if (menu) {
+        document.addEventListener('click', (e) => { if (!menu.contains(e.target as Node)) menu.open = false; });
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape' && menu.open) { menu.open = false; menu.querySelector('summary')?.focus(); }
+        });
+      }
+    </script>
     <footer class="footer">
       <div class="wrap">
         <span>© {new Date().getFullYear()} {SITE.author}</span>

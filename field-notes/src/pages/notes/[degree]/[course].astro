@@ -1,0 +1,17 @@
+---
+import Base from '../../../layouts/Base.astro';
+import EntryItem from '../../../components/EntryItem.astro';
+import { DEGREES, coursesByDegree, slugCourse } from '../../../lib/content';
+
+export async function getStaticPaths() {
+  return (await coursesByDegree()).flatMap(({ deg, courses }) =>
+    courses.map(({ c, items }) => ({ params: { degree: deg, course: slugCourse(c) }, props: { deg, c, items } })));
+}
+const { deg, c, items } = Astro.props;
+---
+<Base title={c} description={`Lecture notes for ${c} (${DEGREES[deg]}).`}>
+  <div class={`kicker ${deg}`}><a href={`/notes/?degree=${deg}`}>{DEGREES[deg]}</a> · Course</div>
+  <h1>{c}</h1>
+  <p class="meta">{items.length} {items.length === 1 ? 'note' : 'notes'} · <a href="/notes/">All notes</a></p>
+  <ul class="list">{items.map((n) => <EntryItem entry={n} />)}</ul>
+</Base>

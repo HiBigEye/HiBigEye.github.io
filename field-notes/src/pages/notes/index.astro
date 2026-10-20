@@ -1,14 +1,9 @@
 ---
 import Base from '../../layouts/Base.astro';
 import EntryItem from '../../components/EntryItem.astro';
-import { DEGREES, getKind } from '../../lib/content';
+import { DEGREES, courseUrl, coursesByDegree } from '../../lib/content';
 
-const notes = await getKind('notes');
-const groups = (['cogsci', 'ai'] as const).map((deg) => {
-  const mine = notes.filter((n) => n.data.degree === deg);
-  const courses = [...new Set(mine.map((n) => n.data.course))].sort();
-  return { deg, courses: courses.map((c) => ({ c, items: mine.filter((n) => n.data.course === c) })) };
-});
+const groups = await coursesByDegree();
 ---
 <Base title="Notes" description="Lecture notes from both degrees.">
   <div class="kicker">Lecture notes</div>
@@ -27,7 +22,7 @@ const groups = (['cogsci', 'ai'] as const).map((deg) => {
       {courses.length === 0 && <p class="meta">No notes yet.</p>}
       {courses.map(({ c, items }) => (
         <>
-          <h3>{c}</h3>
+          <h3><a href={courseUrl(deg, c)}>{c}</a></h3>
           <ul class="list">{items.map((n) => <EntryItem entry={n} />)}</ul>
         </>
       ))}

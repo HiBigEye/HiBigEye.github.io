@@ -122,3 +122,30 @@ h3 { font-size: 1.2rem; margin: 1.6em 0 0.4em; }
 .footer { border-top: 1px solid var(--rule); padding: 1.5rem 0 2.5rem; font-family: var(--sans); font-size: 0.8rem; color: var(--ink-2); }
 .footer .wrap { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: space-between; }
 .footer a { margin-left: 1rem; }
+
+/* Notes dropdown */
+.menu { position: relative; }
+.menu > summary, .menu-degree > summary { list-style: none; cursor: pointer; }
+.menu > summary::-webkit-details-marker, .menu-degree > summary::-webkit-details-marker { display: none; }
+.menu > summary { color: var(--ink-2); }
+.menu > summary::after { content: '▾'; margin-left: 0.35em; font-size: 0.85em; }
+.menu > summary[aria-current='page'], .menu > summary:hover, .menu[open] > summary { color: var(--ink); box-shadow: inset 0 -2px var(--accent); }
+.menu-panel {
+  position: absolute; z-index: 10; top: calc(100% + 0.7rem); left: 0;
+  width: min(17rem, calc(100vw - 2rem)); padding: 0.5rem 0;
+  background: var(--paper); border: 1px solid var(--ink); box-shadow: 0 8px 24px rgb(0 0 0 / 0.12);
+  text-transform: none; letter-spacing: 0; font-size: 0.88rem;
+}
+.menu-panel a { display: block; padding: 0.4rem 1rem; color: var(--ink); }
+.nav .menu-panel a:hover, .nav .menu-panel a[aria-current='page'] { box-shadow: none; color: var(--accent); background: var(--paper-2); }
+.menu-all { border-bottom: 1px solid var(--rule); margin-bottom: 0.3rem; }
+.menu-degree > summary { padding: 0.45rem 1rem; font-weight: 600; display: flex; justify-content: space-between; border-left: 3px solid; }
+.menu-degree.cogsci > summary { color: var(--cogsci); }
+.menu-degree.ai > summary { color: var(--ai); }
+.menu-degree > summary::after { content: '›'; transition: transform 0.15s; }
+.menu-degree[open] > summary::after { transform: rotate(90deg); }
+.menu-degree > summary:hover { background: var(--paper-2); }
+.menu-degree ul { list-style: none; margin: 0 0 0.3rem; padding: 0; }
+.menu-degree li a { padding-left: 1.8rem; }
+.menu-degree li:first-child a { font-style: italic; color: var(--ink-2); }
+.menu-empty { padding: 0.4rem 1.8rem; color: var(--ink-2); }

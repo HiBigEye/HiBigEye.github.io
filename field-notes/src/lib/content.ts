@@ -7,6 +7,7 @@ export const DEGREES = {
   cogsci: 'Cognitive Science',
   ai: 'AI & Data Analytics',
 } as const;
+export type Degree = keyof typeof DEGREES;
 
 export const KIND_LABEL: Record<Kind, string> = {
   notes: 'Note',
@@ -17,12 +18,25 @@ export const KIND_LABEL: Record<Kind, string> = {
 export const keyOf = (e: Entry) => `${e.collection}/${e.id}`;
 export const urlOf = (e: Entry) => `/${e.collection}/${e.id}/`;
 export const slugTag = (t: string) => t.toLowerCase().replace(/\s+/g, '-');
+export const slugCourse = (c: string) =>
+  c.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+export const courseUrl = (deg: Degree, c: string) => `/notes/${deg}/${slugCourse(c)}/`;
 
 const byDate = (a: Entry, b: Entry) => b.data.date.valueOf() - a.data.date.valueOf();
 const live = (e: Entry) => import.meta.env.DEV || !e.data.draft;
 
 export async function getKind<K extends Kind>(kind: K) {
   return ((await getCollection(kind)) as Entry[]).filter(live).sort(byDate) as CollectionEntry<K>[];
+}
+
+/** Courses of each degree (sorted), with their notes. */
+export async function coursesByDegree() {
+  const notes = await getKind('notes');
+  return (Object.keys(DEGREES) as Degree[]).map((deg) => {
+    const mine = notes.filter((n) => n.data.degree === deg);
+    const courses = [...new Set(mine.map((n) => n.data.course))].sort();
+    return { deg, courses: courses.map((c) => ({ c, items: mine.filter((n) => n.data.course === c) })) };
+  });
 }
 
 export async function getAll(): Promise<Entry[]> {
